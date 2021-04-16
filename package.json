@@ -1,0 +1,15 @@
+{
+  "name": "cf-firewall",
+  "version": "1.0.0",
+  "description": "Re-create firewall rules and filters for all domain zones on CF account",
+  "main": "run.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}
