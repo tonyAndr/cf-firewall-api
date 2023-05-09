@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const fs = require("fs");
 
-const ruleExpression = fs.readFileSync("rules.txt", 'utf8');
+const ruleExpressions = fs.readFileSync("rules.txt", 'utf8').replace("\r", '').split("\n");
 const credentials = fs.readFileSync("credentials.txt", 'utf8').replace("\r", '').split("\n");
 const email = credentials[0];
 const key = credentials[1];
@@ -40,18 +40,21 @@ const main = async (page = 1) => {
             console.log("Filter delete ", zone.name, resp.success)
         }
 
-        let filter = await createFilter(zone);
-        let filter_id = '';
-        if (!filter.success) {
-            filter_id = filter.errors[0].meta.id
-            console.log("Filter exists ", zone.name, filter_id);
-        } else {
-            filter_id = filter.result[0].id
-            console.log("Filter Added ", zone.name, filter_id);
+        for (const expression of ruleExpressions) {
+            
+            let filter = await createFilter(zone, expression);
+            let filter_id = '';
+            if (!filter.success) {
+                filter_id = filter.errors[0].meta.id
+                console.log("Filter exists ", zone.name, filter_id);
+            } else {
+                filter_id = filter.result[0].id
+                console.log("Filter Added ", zone.name, filter_id);
+            }
+            let resp = await addRule(zone, filter_id);
+            console.log("AddRule ", zone.name, resp.success);
+            // break;
         }
-        let resp = await addRule(zone, filter_id);
-        console.log("AddRule ", zone.name, resp.success);
-        // break;
     }
     if (zones.result_info.total_count > (page * per_page)) {
         await main(++page)
@@ -111,9 +114,9 @@ const deleteFilter = async (zone, filter) => {
 }
 
 
-const createFilter = async (zone) => {
+const createFilter = async (zone, expression) => {
     let data = [{
-        expression: ruleExpression.replace("{dm_name}", zone.name),
+        expression: expression.replace("{dm_name}", zone.name),
         paused: false,
         description: "Filters mobile bots from SM and w/o refs"
     }];
@@ -130,8 +133,8 @@ const addRule = async (zone, filter_id) => {
         filter: {
             id: filter_id
         },
-        action: "challenge",
-        description: "bot_killer",
+        action: "managed_challenge",
+        description: "bot_filter",
         paused: false
     }];
     const response = await fetch(ep_firewall.replace("{zone}", zone.id), {

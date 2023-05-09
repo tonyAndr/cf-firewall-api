@@ -1,0 +1,6 @@
+(http.request.full_uri eq "?") or (http.request.full_uri contains "&") or (http.request.full_uri contains "login") or (http.request.full_uri contains "wp-json/wordpress-popular-posts") or (http.request.full_uri contains ".zip") or (http.request.full_uri contains ".php") or (http.request.full_uri contains "admin") or (http.request.full_uri contains "xmlrpc")
+
+(http.referer contains "{dm_name}") or (http.referer eq "")
+
+
+(http.referer eq "" and not cf.client.bot and http.request.uri.path contains ".html") or (http.referer eq "" and not cf.client.bot and http.request.uri.path contains "/contacts") or (http.referer eq "" and not cf.client.bot and http.request.uri.path eq "/")

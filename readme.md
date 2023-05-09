@@ -5,6 +5,8 @@ This is node.js script which does the following:
 2. For each zone it removes all firewall rules and filters (be careful with that)
 3. Then it creates new filter and rule (you can change it in rules.txt) for each zone
 
+Add multiple filters each on the new line to create several WAF rules at once.
+
 Before using it, you have to create file called "credentials.txt" with looks like this:
     
     mail@domain.com
